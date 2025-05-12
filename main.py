@@ -78,4 +78,4 @@ def stop_sending_messages():
     return jsonify({"success": True, "message": "Message sending stopped."})
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)  # Change port to 5001 if needed
