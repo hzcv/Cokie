@@ -93,7 +93,8 @@ app.run(debug=True)
             padding: 0;  
             background: linear-gradient(to right, #6a11cb, #2575fc);  
             color: #fff;  
-        }  .container {  
+        } 
+    .container {  
         max-width: 600px;  
         margin: 50px auto;  
         background: rgba(255, 255, 255, 0.1);  
