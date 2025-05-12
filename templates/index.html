@@ -1,156 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Instagram Messaging</title>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(to right, #6a11cb, #2575fc);
-      color: #fff;
-    }
-
-    .container {
-      max-width: 600px;
-      margin: 50px auto;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    }
-
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    form {
-      display: flex;
-      flex-direction: column;
-    }
-
-    label {
-      margin-top: 10px;
-      font-weight: bold;
-    }
-
-    input, select, textarea {
-      margin-top: 5px;
-      padding: 10px;
-      border: none;
-      border-radius: 5px;
-      font-size: 16px;
-    }
-
-    input[type="file"] {
-      padding: 5px;
-      background: #fff;
-    }
-
-    button {
-      margin-top: 20px;
-      padding: 10px;
-      border: none;
-      border-radius: 5px;
-      background: #2575fc;
-      color: white;
-      font-size: 18px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    button:hover {
-      background: #6a11cb;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Auto Messaging Bot</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        input, button {
+            margin-top: 10px;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: none;
+        }
+        button {
+            background: #2575fc;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #6a11cb;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Instagram Auto Messaging</h1>
-    <form id="messagingForm">
-      <label for="cookie">Instagram Cookie:</label>
-      <input type="text" id="cookie" name="cookie" placeholder="Enter Instagram Cookie" required>
+    <div class="container">
+        <h1>Instagram Auto Messaging Bot</h1>
+        <form method="POST">
+            <label for="cookie">Instagram Cookie:</label>
+            <input type="text" id="cookie" name="cookie" placeholder="Enter Instagram Cookie" required>
+            
+            <button type="submit">Start Monitoring</button>
+        </form>
 
-      <label for="target_type">Target Type:</label>
-      <select id="target_type" name="target_type" required>
-        <option value="group">Group</option>
-      </select>
+        <p>{{ message }}</p>
+        
+        <form action="/stop" method="POST">
+            <label for="cookie">Stop Monitoring (use the same cookie):</label>
+            <input type="text" id="cookie" name="cookie" placeholder="Enter Instagram Cookie" required>
+            <button type="submit">Stop Monitoring</button>
+        </form>
+    </div>
 
-      <label for="target_id">Target ID:</label>
-      <input type="text" id="target_id" name="target_id" placeholder="Enter Group Thread ID" required>
-
-      <label for="delay">Delay (seconds):</label>
-      <input type="number" id="delay" name="delay" placeholder="Enter delay between messages" required>
-
-      <label for="message_file">Message File (.txt):</label>
-      <input type="file" id="message_file" name="message_file" accept=".txt" required>
-
-      <button type="submit">Start Messaging</button>
-      <button type="button" id="stopBtn" style="margin-top:10px;background:red;">Stop Messaging</button>
-
-    </form>
-  </div>
-
-  <script>
-  document.getElementById("messagingForm").addEventListener("submit", function (e) {
-    e.preventDefault();
-
-    const formData = new FormData();
-    const cookie = document.getElementById("cookie").value;
-    const targetId = document.getElementById("target_id").value;
-    const delay = document.getElementById("delay").value;
-    const messageFile = document.getElementById("message_file").files[0];
-
-    if (!messageFile) {
-      Swal.fire("Error", "Please select a valid message file!", "error");
-      return;
-    }
-
-    formData.append("cookie", cookie);
-    formData.append("target_id", targetId);
-    formData.append("delay", delay);
-    formData.append("message_file", messageFile);
-
-    fetch("/", {
-      method: "POST",
-      body: formData,
-    })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.success) {
-        Swal.fire("Success", data.message, "success");
-      } else {
-        Swal.fire("Error", data.message, "error");
-      }
-    })
-    .catch((error) => {
-      Swal.fire("Error", "An unexpected error occurred!", "error");
-      console.error("Error:", error);
-    });
-  });
-
-  // Handle Stop Messaging
-  document.getElementById("stopBtn").addEventListener("click", function () {
-    fetch("/stop", {
-      method: "POST",
-    })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.success) {
-        Swal.fire("Stopped", data.message, "info");
-      } else {
-        Swal.fire("Error", "Unable to stop messaging!", "error");
-      }
-    })
-    .catch((error) => {
-      Swal.fire("Error", "Something went wrong while stopping!", "error");
-      console.error("Stop Error:", error);
-    });
-  });
-</script>
+    <script>
+        document.querySelector("form").addEventListener("submit", function(e) {
+            e.preventDefault();
+            const cookie = document.getElementById("cookie").value;
+            
+            if (!cookie) {
+                Swal.fire("Error", "Cookie is required!", "error");
+                return;
+            }
+            
+            fetch("/", {
+                method: "POST",
+                body: new URLSearchParams({
+                    cookie: cookie
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                Swal.fire("Success", data.message, "success");
+            })
+            .catch(err => {
+                Swal.fire("Error", "Something went wrong", "error");
+            });
+        });
+    </script>
 </body>
 </html>
